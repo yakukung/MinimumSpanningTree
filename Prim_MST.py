@@ -51,7 +51,7 @@ pos = {
 }
 
 # วาดกราฟ
-plt.figure(figsize=(12, 8))
+plt.figure(figsize=(15, 8))
 
 # ไฮไลท์โหนดเริ่มต้น
 node_color = ['lightgreen' if node == start else 'lightblue' for node in G.nodes()]

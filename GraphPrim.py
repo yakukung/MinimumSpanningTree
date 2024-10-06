@@ -28,7 +28,7 @@ pos = {
 }
 
 # วาดกราฟ
-plt.figure(figsize=(12, 8))
+plt.figure(figsize=(15, 8))
 nx.draw(G, pos, with_labels=True, node_color='lightblue', node_size=3000, font_size=16, font_weight='bold', edge_color='gray')
 
 # วาดน้ำหนักของเส้นเชื่อม
