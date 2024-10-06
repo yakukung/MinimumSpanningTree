@@ -17,24 +17,43 @@ for node, edges in graph.items():
     for neighbor, weight in edges.items():
         G.add_edge(node, neighbor, weight=weight)
 
-# ฟังก์ชัน Prim's Algorithm สำหรับหา MST
+# ฟังก์ชัน Prim's Algorithm สำหรับหา Minimum Spanning Tree (MST)
 def prim_mst(G, start):
+    # สร้างกราฟว่างสำหรับเก็บ MST
     mst = nx.Graph()
+    
+    # สร้างชุด visited สำหรับเก็บโหนดที่เยี่ยมชมแล้ว โดยเริ่มต้นที่โหนด 'start'
     visited = set([start])
+    
+    # สร้างลิสต์ของ edges เริ่มต้น โดยเก็บน้ำหนักและโหนดที่เชื่อมโยงกันจากโหนด 'start'
     edges = [(data['weight'], start, neighbor) for neighbor, data in G[start].items()]
+    
+    # แปลงลิสต์ edges ให้เป็น heap เพื่อใช้ในการดึงข้อมูลที่มีน้ำหนักน้อยที่สุด
     heapq.heapify(edges)
     
+    # ทำงานในขณะที่ยังมี edges ที่เหลือใน heap
     while edges:
+        # ดึง edge ที่มีน้ำหนักน้อยที่สุดจาก heap
         weight, u, v = heapq.heappop(edges)
+        
+        # ถ้าโหนด v ยังไม่ได้ถูกเยี่ยมชม
         if v not in visited:
+            # เพิ่มโหนด v ลงในชุด visited
             visited.add(v)
+            
+            # เพิ่ม edge ที่เชื่อมระหว่าง u และ v ลงใน MST
             mst.add_edge(u, v, weight=weight)
             
+            # สำหรับโหนด neighbors ที่เชื่อมโยงกับ v
             for neighbor, data in G[v].items():
+                # ถ้า neighbor ยังไม่ได้ถูกเยี่ยมชม
                 if neighbor not in visited:
+                    # เพิ่ม edge ใหม่ลงใน heap สำหรับการพิจารณาในรอบถัดไป
                     heapq.heappush(edges, (data['weight'], v, neighbor))
     
+    # ส่งคืนกราฟ MST ที่ได้
     return mst
+
 
 # หา MST ด้วยอัลกอริธึม Prim
 start = 'A'
