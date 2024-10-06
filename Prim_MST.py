@@ -94,7 +94,7 @@ plt.tight_layout()
 plt.show()
 
 # แสดงผลลัพธ์ MST
-print("เส้นทางใน Minimum Spanning Tree (Prim):")
+print("Minimum Spanning Tree (Prim)")
 for u, v, data in mst.edges(data=True):
     print(f"{u} -- {v} : น้ำหนัก {data['weight']}")
 print(f"น้ำหนักรวมทั้งหมด: {sum(data['weight'] for u, v, data in mst.edges(data=True))}")

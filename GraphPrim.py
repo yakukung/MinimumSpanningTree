@@ -35,7 +35,7 @@ nx.draw(G, pos, with_labels=True, node_color='lightblue', node_size=3000, font_s
 edge_labels = nx.get_edge_attributes(G, 'weight')
 nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=14)
 
-plt.title("Undirected Graph with Updated Fixed Node Positions", fontsize=16)
+plt.title("Minimum Spanning Tree (Prim)", fontsize=16)
 plt.axis('off')  # ปิดการแสดงแกน
 plt.tight_layout()
 plt.show()
