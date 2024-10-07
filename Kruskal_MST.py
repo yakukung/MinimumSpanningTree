@@ -1,5 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+from collections import deque
 
 graph = {
     'A': {'B': 5, 'C': 10},
@@ -18,40 +19,39 @@ for node, edges in graph.items():
 # ใช้อัลกอริธึม Kruskal เพื่อหา Minimum Spanning Tree (MST)
 # 1. เรียงลำดับเส้นทางตามน้ำหนักจากน้อยไปมาก
 sorted_edges = sorted(G.edges(data=True), key=lambda x: x[2]['weight'])
+
 # 2. สร้างโครงสร้างเก็บ MST
 mst = nx.Graph()
-# 3. ใช้ union-find เพื่อตรวจสอบ cycle
-# สร้าง dictionary เพื่อเก็บ parent ของแต่ละ node
-uf = {node: node for node in G.nodes()}
 
-# ฟังก์ชันสำหรับค้นหา root ของ node
-def find(node):
-    if uf[node] != node:
-        uf[node] = find(uf[node])
-    return uf[node]
-
-# ฟังก์ชันสำหรับรวมสอง set ที่มี node1 และ node2 อยู่
-def union(node1, node2):
-    root1 = find(node1)
-    root2 = find(node2)
+def bfs(start, goal, graph):
+    # ตรวจสอบว่าโหนดต้นทางและโหนดปลายทางมีอยู่ในกราฟหรือไม่
+    if start not in graph or goal not in graph:
+        return False
     
-    # ตรวจสอบว่าทั้งสองอยู่ในกลุ่มเดียวกันหรือไม่
-    if root1 != root2:
-        uf[root1] = root2  # ทำให้ node1 เป็นลูกของ node2
+    queue = deque([start])
+    visited = set([start])
+    
+    while queue:
+        node = queue.popleft()
+        if node == goal:  # นำโหนดแรกออกจากคิว
+            return True
+        
+        for neighbor in graph.neighbors(node):
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+                
+    return False
 
 # 4. เพิ่มเส้นทางเข้า MST ทีละเส้นถ้าไม่ก่อให้เกิด cycle
 for u, v, data in sorted_edges:
-    if find(u) != find(v):
+    if not bfs(u, v, mst):
         mst.add_edge(u, v, weight=data['weight'])
-        union(u, v)
 
 # กำหนดตำแหน่งโหนดแบบคงที่
 pos = {
-    'A': (0, 0),
-    'B': (2, 1),
-    'C': (2, -1),
-    'D': (4, 2),
-    'E': (4, 0),
+    'A': (0, 0), 'B': (2, 1), 'C': (2, -1),
+    'D': (4, 2), 'E': (4, 0),
 }
 
 # วาดกราฟ
@@ -70,7 +70,7 @@ edge_labels = {(u, v): G[u][v]['weight'] for u, v in G.edges()}
 nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=14, font_weight='bold')
 
 # แสดงกราฟ
-plt.title("Minimum Spanning Tree (Kruskal's Algorithm)", fontsize=16)
+plt.title("Minimum Spanning Tree (Kruskal's Algorithm with BFS)", fontsize=16)
 plt.axis('off')
 plt.tight_layout()
 plt.show()
