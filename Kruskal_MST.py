@@ -27,22 +27,17 @@ def bfs(start, goal, graph):
     # ตรวจสอบว่าโหนดต้นทางและโหนดปลายทางมีอยู่ในกราฟหรือไม่
     if start not in graph or goal not in graph:
         return False
-    
     queue = deque([start])
     visited = set([start])
-    
     while queue:
         node = queue.popleft()
-        if node == goal:  # นำโหนดแรกออกจากคิว
+        if node == goal:  
             return True
-        
         for neighbor in graph.neighbors(node):
             if neighbor not in visited:
                 visited.add(neighbor)
                 queue.append(neighbor)
-                
     return False
-
 # 4. เพิ่มเส้นทางเข้า MST ทีละเส้นถ้าไม่ก่อให้เกิด cycle
 for u, v, data in sorted_edges:
     if not bfs(u, v, mst):
@@ -69,11 +64,6 @@ nx.draw_networkx_edges(G, pos, edgelist=mst.edges(), edge_color='r', width=2, ar
 edge_labels = {(u, v): G[u][v]['weight'] for u, v in G.edges()}
 nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=14, font_weight='bold')
 
-# แสดงกราฟ
-plt.title("Minimum Spanning Tree (Kruskal's Algorithm with BFS)", fontsize=16)
-plt.axis('off')
-plt.tight_layout()
-plt.show()
 
 # แสดงผลลัพธ์ MST
 print("เส้นทางใน Minimum Spanning Tree (Kruskal):")
@@ -83,3 +73,10 @@ for u, v, data in mst.edges(data=True):
 # คำนวณน้ำหนักรวมของเส้นเชื่อมใน MST
 total_weight = sum(data['weight'] for u, v, data in mst.edges(data=True))
 print(f"น้ำหนักรวมทั้งหมด: {total_weight}")
+# แสดงกราฟ
+plt.title("Minimum Spanning Tree (Kruskal's Algorithm with BFS)", fontsize=16)
+plt.axis('off')
+plt.tight_layout()
+plt.show()
+
+

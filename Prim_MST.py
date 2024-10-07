@@ -11,6 +11,8 @@ graph = {
     'F': {'C': 12, 'E': 6, 'D':7},  
 }
 
+start = 'A'
+
 # สร้างกราฟแบบไม่มีทิศทางด้วย NetworkX
 G = nx.Graph()
 for node, edges in graph.items():
@@ -45,7 +47,6 @@ def prim_mst(G, start):
     return mst
 
 # หา MST ด้วยอัลกอริธึม Prim
-start = 'A'
 mst = prim_mst(G, start)
 
 # กำหนดตำแหน่งโหนดแบบคงที่
