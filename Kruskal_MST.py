@@ -28,9 +28,8 @@ def kruskal_mst_pq(graph):
             # เพิ่มโหนดทั้งสองเข้าไปใน set ของโหนดที่เชื่อมต่อแล้ว
             connected.add(u)
             connected.add(v)
-            print('ต้นทาง',u)
-            print('ปลายทาง',v)
-            print('น้ำหนักของ {u}',weight)
+            print(f'น้ำหนักของ {u} ไป {v} =', weight)
+            print('==========================')
     # ส่งคืน Minimum Spanning Tree ที่สร้างเสร็จแล้ว
     return mst
 
