@@ -1,6 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-from collections import deque
+from heapq import heapify, heappop
 
 graph = {
     'A': {'B': 5, 'C': 10},
@@ -9,74 +9,59 @@ graph = {
     'D': {'B': 8, 'C': 1, 'E': 3},
     'E': {'D': 3, 'C': 2},
 }
+def kruskal_mst_pq(graph):
+    # สร้างกราฟเปล่าสำหรับเก็บ Minimum Spanning Tree (MST)
+    mst = nx.Graph()
+    # สร้างรายการของเส้นเชื่อมทั้งหมดในรูปแบบ (น้ำหนัก, โหนดต้นทาง, โหนดปลายทาง)
+    edges = [(weight, u, v) for u in graph for v, weight in graph[u].items()]
+    # แปลงรายการ edges เป็น min-heap
+    heapify(edges)
+    connected = set()    # สร้าง set เพื่อเก็บโหนดที่เชื่อมต่อแล้วใน MST
+    # วนลูปจนกว่าจะไม่มีเส้นเชื่อมเหลือใน heap
+    while edges:
+        # ดึงเส้นเชื่อมที่มีน้ำหนักน้อยที่สุดออกจาก heap
+        weight, u, v = heappop(edges)
+        # ตรวจสอบว่าการเพิ่มเส้นเชื่อมนี้จะไม่ทำให้เกิด cycle
+        if u not in connected or v not in connected or not nx.has_path(mst, u, v):
+            # เพิ่มเส้นเชื่อมเข้าไปใน MST
+            mst.add_edge(u, v, weight=weight)
+            # เพิ่มโหนดทั้งสองเข้าไปใน set ของโหนดที่เชื่อมต่อแล้ว
+            connected.add(u)
+            connected.add(v)
+            print('ต้นทาง',u)
+            print('ปลายทาง',v)
+            print('น้ำหนักของ {u}',weight)
+    # ส่งคืน Minimum Spanning Tree ที่สร้างเสร็จแล้ว
+    return mst
 
-# สร้างกราฟแบบไม่มีทิศทางด้วย NetworkX
-G = nx.Graph()
-for node, edges in graph.items():
-    for neighbor, weight in edges.items():
-        G.add_edge(node, neighbor, weight=weight)
+G = nx.Graph(graph)
+mst = kruskal_mst_pq(graph)
 
-# ใช้อัลกอริธึม Kruskal เพื่อหา Minimum Spanning Tree (MST)
-# 1. เรียงลำดับเส้นทางตามน้ำหนักจากน้อยไปมาก
-sorted_edges = sorted(G.edges(data=True), key=lambda x: x[2]['weight'])
-
-# 2. สร้างโครงสร้างเก็บ MST
-mst = nx.Graph()
-
-def bfs(start, goal, graph):
-    # ตรวจสอบว่าโหนดต้นทางและโหนดปลายทางมีอยู่ในกราฟหรือไม่
-    if start not in graph or goal not in graph:
-        return False
-    queue = deque([start])
-    visited = set([start])
-    while queue:
-        node = queue.popleft()
-        if node == goal:  
-            return True
-        for neighbor in graph.neighbors(node):
-            if neighbor not in visited:
-                visited.add(neighbor)
-                queue.append(neighbor)
-    return False
-# 4. เพิ่มเส้นทางเข้า MST ทีละเส้นถ้าไม่ก่อให้เกิด cycle
-for u, v, data in sorted_edges:
-    if not bfs(u, v, mst):
-        mst.add_edge(u, v, weight=data['weight'])
-
-# กำหนดตำแหน่งโหนดแบบคงที่
 pos = {
     'A': (0, 0), 'B': (2, 1), 'C': (2, -1),
     'D': (4, 2), 'E': (4, 0),
 }
 
-# วาดกราฟ
 plt.figure(figsize=(15, 8))
 nx.draw_networkx_nodes(G, pos, node_color='lightblue', node_size=3000)
 nx.draw_networkx_labels(G, pos, font_size=16, font_weight='bold')
 
-# วาดเส้นเชื่อมทั้งหมดในกราฟ
 nx.draw_networkx_edges(G, pos, edge_color='gray', width=1, arrows=False)
 
-# วาดเส้นเชื่อมของ MST
 nx.draw_networkx_edges(G, pos, edgelist=mst.edges(), edge_color='r', width=2, arrows=False)
 
-# แสดงน้ำหนักของ edges
-edge_labels = {(u, v): G[u][v]['weight'] for u, v in G.edges()}
+# แก้ไขส่วนนี้เพื่อแสดงน้ำหนักของ edges ให้ถูกต้อง
+edge_labels = {(u, v): graph[u][v] for u in graph for v in graph[u]}
 nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=14, font_weight='bold')
 
-
-# แสดงผลลัพธ์ MST
-print("เส้นทางใน Minimum Spanning Tree (Kruskal):")
+print("เส้นทางใน Minimum Spanning Tree (Kruskal's Algorithm")
 for u, v, data in mst.edges(data=True):
     print(f"{u} -- {v} : น้ำหนัก {data['weight']}")
 
-# คำนวณน้ำหนักรวมของเส้นเชื่อมใน MST
 total_weight = sum(data['weight'] for u, v, data in mst.edges(data=True))
 print(f"น้ำหนักรวมทั้งหมด: {total_weight}")
-# แสดงกราฟ
-plt.title("Minimum Spanning Tree (Kruskal's Algorithm with BFS)", fontsize=16)
+
+plt.title("Minimum Spanning Tree (Kruskal's Algorithm)", fontsize=16)
 plt.axis('off')
 plt.tight_layout()
 plt.show()
-
-
